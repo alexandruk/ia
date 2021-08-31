@@ -1,0 +1,155 @@
+#Cidade.py
+class Cidade:
+    def __init__(self, nome):
+        self.nome = nome
+        self.visitado = False
+        self.adjacentes = []
+        
+    def addCidadeAdjacente(self, cidade):
+        self.adjacentes.append(cidade)
+
+
+
+#Adjacente.py
+class Adjacente:
+    def __init__(self, cidade):
+        self.cidade = cidade
+
+
+
+#Mapa.py
+from Cidade import Cidade
+from Adjacente import Adjacente
+
+class Mapa:
+    fozDoIguacu = Cidade("Foz do Iguaçu")
+    cascavel = Cidade("Cascavel")
+    patoBranco = Cidade("Pato Branco")
+    campoMourao = Cidade("Campo Mourão")
+    maringa = Cidade("Maringá")
+    guarapuava = Cidade("Guarapuava")
+    londrina = Cidade("Londrina")
+    uniaoDaVitoria = Cidade("União da Vitória")
+    irati = Cidade("Irati")
+    pontaGrossa = Cidade("Ponta Grossa")
+    curitiba = Cidade("Curitiba")
+    
+    fozDoIguacu.addCidadeAdjacente(Adjacente(cascavel))
+    fozDoIguacu.addCidadeAdjacente(Adjacente(patoBranco))
+    
+    cascavel.addCidadeAdjacente(Adjacente(fozDoIguacu))
+    cascavel.addCidadeAdjacente(Adjacente(campoMourao))
+    cascavel.addCidadeAdjacente(Adjacente(guarapuava))
+    cascavel.addCidadeAdjacente(Adjacente(patoBranco))
+    
+    patoBranco.addCidadeAdjacente(Adjacente(fozDoIguacu))
+    patoBranco.addCidadeAdjacente(Adjacente(guarapuava))
+    
+    campoMourao.addCidadeAdjacente(Adjacente(maringa))
+    campoMourao.addCidadeAdjacente(Adjacente(cascavel))
+    campoMourao.addCidadeAdjacente(Adjacente(guarapuava))
+    
+    maringa.addCidadeAdjacente(Adjacente(campoMourao))
+    maringa.addCidadeAdjacente(Adjacente(londrina))
+    
+    guarapuava.addCidadeAdjacente(Adjacente(patoBranco))
+    guarapuava.addCidadeAdjacente(Adjacente(cascavel))
+    guarapuava.addCidadeAdjacente(Adjacente(campoMourao))
+    guarapuava.addCidadeAdjacente(Adjacente(londrina))
+    guarapuava.addCidadeAdjacente(Adjacente(pontaGrossa))
+    guarapuava.addCidadeAdjacente(Adjacente(irati))
+    
+    londrina.addCidadeAdjacente(Adjacente(maringa))
+    londrina.addCidadeAdjacente(Adjacente(guarapuava))
+    londrina.addCidadeAdjacente(Adjacente(pontaGrossa))
+    
+    uniaoDaVitoria.addCidadeAdjacente(Adjacente(cascavel))
+    uniaoDaVitoria.addCidadeAdjacente(Adjacente(irati))
+    uniaoDaVitoria.addCidadeAdjacente(Adjacente(curitiba))
+    
+    irati.addCidadeAdjacente(Adjacente(uniaoDaVitoria))
+    irati.addCidadeAdjacente(Adjacente(guarapuava))
+    irati.addCidadeAdjacente(Adjacente(curitiba))
+    
+    pontaGrossa.addCidadeAdjacente(Adjacente(londrina))
+    pontaGrossa.addCidadeAdjacente(Adjacente(guarapuava))
+    pontaGrossa.addCidadeAdjacente(Adjacente(curitiba))
+    
+    curitiba.addCidadeAdjacente(Adjacente(pontaGrossa))
+    curitiba.addCidadeAdjacente(Adjacente(irati))
+    curitiba.addCidadeAdjacente(Adjacente(uniaoDaVitoria))
+    
+mapa = Mapa()
+mapa.fozDoIguacu.adjacentes
+for i in range(len(mapa.fozDoIguacu.adjacentes)):
+    print(mapa.fozDoIguacu.adjacentes[i].cidade.nome)
+
+
+
+#Pilha.py
+class Pilha:
+    def __init__(self, tamanho):
+        self.tamanho = tamanho
+        self.cidades = [None] * self.tamanho
+        self.topo = -1
+        
+    def empilhar(self, cidade):
+        if not Pilha.pilhaCheia(self):
+            self.topo += 1
+            self.cidades[self.topo] = cidade
+        else:
+            print("A pilha está cheia")
+    
+    def desempilhar(self):
+        if not Pilha.pilhaVazia(self):
+            temp = self.cidades[self.topo]
+            self.topo -= 1
+            return temp
+        else:
+            print("A pilha está vazia")
+            return None
+    
+    def getTopo(self):
+        return self.cidades[self.topo]
+    
+    def pilhaVazia(self):
+        return (self.topo == -1)
+    
+    def pilhaCheia(self):
+        return (self.topo == self.tamanho -1)
+
+
+
+#Profundidade.py
+#Empilha até encontrar o objetivo e desempilha
+from Pilha import Pilha
+
+class Profundidade:
+    def __init__(self, inicio, objetivo):
+        self.inicio = inicio
+        self.inicio.visitado = True
+        self.objetivo = objetivo
+        self.fronteira = Pilha(15)
+        self.fronteira.empilhar(inicio)
+        self.achou = False
+        
+    def buscar(self):
+        topo = self.fronteira.getTopo()
+        print('topo: {}'.format(topo.nome))
+        
+        if topo == self.objetivo:
+            self.achou = True
+        else:
+            for a in topo.adjacentes:
+                if self.achou == False:
+                    print('Verificando se já visitado: {}'.format(a.cidade.nome))
+                    if a.cidade.visitado == False:
+                        a.cidade.visitado = True
+                        self.fronteira.empilhar(a.cidade)
+                        Profundidade.buscar(self)
+        print('Desempilhou: {}'.format(self.fronteira.desempilhar().nome))
+    
+from Mapa import Mapa
+mapa = Mapa()
+profundidade = Profundidade(mapa.fozDoIguacu, mapa.curitiba)
+profundidade.buscar()
