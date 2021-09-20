@@ -1,0 +1,159 @@
+#Cidade.py
+class Cidade:
+    def __init__(self, nome, distanciaObjetivo):
+        self.nome = nome
+        self.visitado = False
+        self.distanciaObjetivo = distanciaObjetivo
+        self.adjacentes = []
+    
+    def addCidadeAdjacente(self, cidade):
+        self.adjacentes.append(cidade)
+
+
+
+
+#Adjacente.py
+class Adjacente:
+    def __init__(self, cidade, distancia):
+        self.cidade = cidade
+        self.distancia = distancia
+        self.distanciaAEstrela = self.cidade.distanciaObjetivo + self.distancia
+
+
+
+
+#Mapa.py
+from Cidade import Cidade
+from Adjacente import Adjacente
+
+class Mapa:
+    fozDoIguacu = Cidade("Foz do Iguaçu", 535)
+    cascavel = Cidade("Cascavel", 426)
+    patoBranco = Cidade("Pato Branco", 353)
+    campoMourao = Cidade("Campo Mourão", 350)
+    maringa = Cidade("Maringá", 350)
+    guarapuava = Cidade("Guarapuava", 221)
+    londrina = Cidade("Londrina", 305)
+    uniaoDaVitoria = Cidade("União da Vitória", 203)
+    irati = Cidade("Irati", 139)
+    pontaGrossa = Cidade("Ponta Grossa", 97)
+    curitiba = Cidade("Curitiba", 0)
+    
+    fozDoIguacu.addCidadeAdjacente(Adjacente(cascavel, 129))
+    fozDoIguacu.addCidadeAdjacente(Adjacente(patoBranco, 207))
+    
+    cascavel.addCidadeAdjacente(Adjacente(fozDoIguacu, 129))
+    cascavel.addCidadeAdjacente(Adjacente(campoMourao, 149))
+    cascavel.addCidadeAdjacente(Adjacente(guarapuava, 207))
+    cascavel.addCidadeAdjacente(Adjacente(patoBranco, 162))
+    
+    patoBranco.addCidadeAdjacente(Adjacente(fozDoIguacu, 207))
+    patoBranco.addCidadeAdjacente(Adjacente(guarapuava, 153))
+    
+    campoMourao.addCidadeAdjacente(Adjacente(maringa, 83))
+    campoMourao.addCidadeAdjacente(Adjacente(cascavel, 149))
+    campoMourao.addCidadeAdjacente(Adjacente(guarapuava, 176))
+    
+    maringa.addCidadeAdjacente(Adjacente(campoMourao, 83))
+    maringa.addCidadeAdjacente(Adjacente(londrina, 79))
+    
+    guarapuava.addCidadeAdjacente(Adjacente(patoBranco, 153))
+    guarapuava.addCidadeAdjacente(Adjacente(cascavel, 207))
+    guarapuava.addCidadeAdjacente(Adjacente(campoMourao, 176))
+    guarapuava.addCidadeAdjacente(Adjacente(londrina, 234))
+    guarapuava.addCidadeAdjacente(Adjacente(pontaGrossa, 135))
+    guarapuava.addCidadeAdjacente(Adjacente(irati, 83))
+    
+    londrina.addCidadeAdjacente(Adjacente(maringa, 79))
+    londrina.addCidadeAdjacente(Adjacente(guarapuava, 234))
+    londrina.addCidadeAdjacente(Adjacente(pontaGrossa, 225))
+    
+    uniaoDaVitoria.addCidadeAdjacente(Adjacente(cascavel, 277))
+    uniaoDaVitoria.addCidadeAdjacente(Adjacente(irati, 94))
+    uniaoDaVitoria.addCidadeAdjacente(Adjacente(curitiba, 203))
+    
+    irati.addCidadeAdjacente(Adjacente(uniaoDaVitoria, 94))
+    irati.addCidadeAdjacente(Adjacente(guarapuava, 83))
+    irati.addCidadeAdjacente(Adjacente(curitiba, 139))
+    
+    pontaGrossa.addCidadeAdjacente(Adjacente(londrina, 225))
+    pontaGrossa.addCidadeAdjacente(Adjacente(guarapuava, 135))
+    pontaGrossa.addCidadeAdjacente(Adjacente(curitiba, 97))
+    
+    curitiba.addCidadeAdjacente(Adjacente(pontaGrossa, 97))
+    curitiba.addCidadeAdjacente(Adjacente(irati, 139))
+    curitiba.addCidadeAdjacente(Adjacente(uniaoDaVitoria, 203))
+    
+'''mapa = Mapa()
+mapa.uniaoDaVitoria.nome
+mapa.uniaoDaVitoria.visitado
+mapa.uniaoDaVitoria.adjacentes
+mapa.uniaoDaVitoria.distanciaObjetivo
+for i in range(len(mapa.uniaoDaVitoria.adjacentes)):
+    print(mapa.uniaoDaVitoria.adjacentes[i].cidade.nome)'''
+
+
+
+
+#VetorOrdenadoAdjacente.py
+class VetorOrdenadoAdjacente:
+    def __init__(self, tamanho):
+        self.numeroElementos = 0
+        self.adjacentes = [None] * tamanho
+    
+    def inserir(self, adjacente):
+        if self.numeroElementos == 0:
+            self.adjacentes[0] = adjacente
+            self.numeroElementos = 1
+            return
+        
+        posicao = 0
+        i = 0
+        while i < self.numeroElementos:
+            if adjacente.distanciaAEstrela > self.adjacentes[posicao].distanciaAEstrela:
+                posicao += 1
+            i += 1
+            
+        for k in range(self.numeroElementos, posicao, -1):
+            self.adjacentes[k] = self.adjacentes[k - 1]
+            
+        self.adjacentes[posicao] = adjacente
+        self.numeroElementos += 1
+        
+    def getPrimeiro(self):
+        return self.adjacentes[0].cidade
+    
+    def mostrar(self):
+        for i in range(0, self.numeroElementos):
+            print('{} - {}'.format(self.adjacentes[i].cidade.nome, self.adjacentes[i].distanciaAEstrela))
+            
+
+
+#AEstrela.py
+from VetorOrdenadoAdjacente import VetorOrdenadoAdjacente
+
+class AEstrela:
+    def __init__(self, objetivo):
+        self.objetivo = objetivo
+        self.achou = False
+        
+    def buscar(self, atual):
+        print('\nAtual: {}'.format(atual.nome))
+        atual.visitado = True
+        
+        if atual == self.objetivo:
+            self.achou = True
+        else:
+            self.fronteira = VetorOrdenadoAdjacente(len(atual.adjacentes))
+            for a in atual.adjacentes:
+                if a.cidade.visitado == False:
+                    a.cidade.visitado = True
+                    self.fronteira.inserir(a)
+            self.fronteira.mostrar()
+            if self.fronteira.getPrimeiro() != None:
+                AEstrela.buscar(self, self.fronteira.getPrimeiro())
+                
+from Mapa import Mapa
+mapa = Mapa()
+aestrela = AEstrela(mapa.curitiba)
+aestrela.buscar(mapa.fozDoIguacu)
