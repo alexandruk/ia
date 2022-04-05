@@ -1,0 +1,35 @@
+package credito;
+
+public class Credito {
+
+    public static int analiseCredito(
+        double renda,
+        double percentualCarro,
+        double percentualImovel,
+        double tempoTrabalho,
+        double percentualOutrasDividas) {
+    
+    int limiteCredito;
+    
+    if (renda >= 5000 && percentualCarro < 0.10 && percentualImovel < 0.20) {
+        
+        //concede credito
+        if (tempoTrabalho >=4) {
+            limiteCredito = 10000;
+        } else {
+            if (percentualOutrasDividas < 0.05) {
+                limiteCredito = 10000;
+            } else {
+                limiteCredito = 3000;
+                }
+            }
+        } else {
+            limiteCredito = 0;
+        }
+        return limiteCredito;
+    }
+
+    public static void main(String[] args) {
+    System.out.println(analiseCredito(50000, 0.05, 0.1, 5, 0));
+    }
+}
