@@ -1,0 +1,134 @@
+/*Source code of expert system*/
+/*Para executar: Digitar go.*/
+go:-
+hypothesis(Doença),
+write('Diagnóstico provável: '),
+write(Doença),
+nl,
+write('CUIDE-SE '),
+undo.
+
+/*Hypothesis that should be tested*/
+hypothesis(resfriado) :- resfriado, !.
+hypothesis(gripe) :- gripe, !.
+hypothesis(tifoide) :- tifoide, !.
+hypothesis(sarampo) :- sarampo, !.
+hypothesis(malaria) :- malaria, !.
+hypothesis(desconhecido). /* no diagnosis*/
+
+/*Hypothesis Identification Rules*/
+
+resfriado :-
+verify(dor_de_cabeca),
+verify(nariz_pingando),
+verify(espirrando),
+verify(dor_de_garganta),
+write('Conselhos e Sugestões:'),
+nl,
+write('1: Tylenol/comp'),
+nl,
+write('2: Panadol/comp'),
+nl,
+write('3: Nasal spray'),
+nl,
+write('Por favor, use roupas quentes porque: '),
+nl.
+
+gripe :-
+verify(febre),
+verify(dor_de_cabeca),
+verify(arrepios),
+verify(dor_no_corpo),
+write('Conselhos e Sugestões:'),
+nl,
+write('1: Tamiflu/comp'),
+nl,
+write('2: Panadol/comp'),
+nl,
+write('3: Zanamivir/comp'),
+nl,
+write('Por favor, tome um banho quente e faça gargarejo de sal porque: '),
+nl.
+
+tifoide :-
+verify(dor_de_cabeca),
+verify(dor_abdominal),
+verify(pouco_apetite),
+verify(febre),
+write('Conselhos e Sugestões:'),
+nl,
+write('1: Chloramphenicol/comp'),
+nl,
+write('2: Amoxicillin/comp'),
+nl,
+write('3: Ciprofloxacin/comp'),
+nl,
+write('4: Azithromycin/comp'),
+nl,
+write('Por favor, faça repouso completo e tome uma dieta suave porque: '),
+nl.
+
+sarampo :-
+verify(febre),
+verify(naris_pingando),
+verify(irritacao_da_pele),
+verify(conjuntivite),
+write('Conselhos e Sugestões:'),
+nl,
+write('1: Tylenol/comp'),
+nl,
+write('2: Aleve/comp'),
+nl,
+write('3: Advil/comp'),
+nl,
+write('4: Vitamina A'),
+nl,
+write('Por favor, descanse e tome mais líquido porque: '),
+nl.
+
+malaria :-
+verify(febre),
+verify(sudorese),
+verify(dor_de_cabeca),
+verify(nausea),
+verify(vomito),
+verify(diarreia),
+write('Conselhos e Sugestões:'),
+nl,
+write('1: Aralen/comp'),
+nl,
+write('2: Qualaquin/comp'),
+nl,
+write('3: Plaquenil/comp'),
+nl,
+write('4: Mefloquine'),
+nl,
+write('Por favor, não durma ao ar livre e cubra toda a sua pele porque: '),
+nl.
+
+/* how to ask questions */
+ask(Question) :-
+write('O paciente tem o seguinte sintoma: '),
+write(Question),
+write('? '),
+read(Response),
+nl,
+( (Response == sim ; Response == s)
+->
+assert(sim(Question)) ;
+assert(nao(Question)), fail).
+
+:- dynamic sim/1,nao/1.
+/*How to verify something */
+verify(S) :-
+(sim(S)
+->
+true ;
+(nao(S)
+->
+fail ;
+ask(S))).
+/* undo all yes/no assertions*/
+undo :- retract(sim(_)),fail.
+undo :- retract(nao(_)),fail.
+undo.
